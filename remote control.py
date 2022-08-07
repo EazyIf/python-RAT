@@ -1,4 +1,3 @@
-from asyncio import events
 import PySimpleGUI as sg
 
 sg.theme('default1')
