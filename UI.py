@@ -78,5 +78,4 @@ def main():
             open_window3()
     window.close()
 if __name__ == "__main__":
-    main(
-_DO_HANDSHAKE
+    main()
