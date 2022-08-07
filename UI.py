@@ -1,3 +1,4 @@
+from asyncio.sslproto import _DO_HANDSHAKE
 import PySimpleGUI as sg
 
 sg.theme('default1')
@@ -77,4 +78,5 @@ def main():
             open_window3()
     window.close()
 if __name__ == "__main__":
-    main()
+    main(
+_DO_HANDSHAKE
