@@ -1,7 +1,7 @@
 import pygame
 import os
 
-path = os.path.join(os.getenv("APPDATA"), "WindowsDefender")
+path = os.path.join(os.getenv("APPDATA"), "RAT")
 filename = "rickroll.mp3"
 file_path = os.path.join(path, filename)
 pygame.init()
