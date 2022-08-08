@@ -1,13 +1,13 @@
-from asyncio.sslproto import _DO_HANDSHAKE
+
 import PySimpleGUI as sg
 
 sg.theme('default1')
 
-def open_window3():
+def open_other_files_window():
     layout = [[sg.Text('Enter the file name: '), sg.InputText()],
              [sg.Button("Open File")]]
              
-    window = sg.Window("Second Window", layout, modal=True)
+    window = sg.Window("open other files", layout, modal=True)
     choice = None
     while True:
         event, values = window.read()
@@ -17,11 +17,11 @@ def open_window3():
 
     window.close()
 
-def open_window2():
+def open_send_files_window():
     layout = [[sg.Text('Enter the file directory: '), sg.InputText()],
              [sg.Button("Send File")]]
              
-    window = sg.Window("Second Window", layout, modal=True)
+    window = sg.Window("Send Files", layout, modal=True)
     choice = None
     while True:
         event, values = window.read()
@@ -31,11 +31,11 @@ def open_window2():
     
     window.close()
 
-def open_window():
+def tts_window():
     layout = [[sg.Text('Wirte your text here: '), sg.InputText()],
              [sg.Button("Send TTS")]]
              
-    window = sg.Window("Second Window", layout, modal=True)
+    window = sg.Window("TTS Window", layout, modal=True)
     choice = None
     while True:
         event, values = window.read()
@@ -45,7 +45,7 @@ def open_window():
     
     window.close()
 
-def open_window1():
+def open_mp3_window():
     layout = [[sg.Text('enter file name'), sg.InputText()],
              [sg.Button("send")]]
              
@@ -69,13 +69,13 @@ def main():
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == "send tts massege":
-            open_window()
+            tts_window()
         if event == "open mp3 files":
-            open_window1()
+            open_mp3_window()
         if event == "send files":
-            open_window2()
+            open_send_files_window()
         if event == "open other files":
-            open_window3()
+            open_other_files_window()
     window.close()
 if __name__ == "__main__":
     main()
