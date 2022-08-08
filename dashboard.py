@@ -86,7 +86,7 @@ def send_tts(tts_text):
     tts = f"""from gtts import gTTS
 import pygame
 
-text = "{tts_text}
+text = "{tts_text}"
 # generate tts
 pygame.init()
 pygame.mixer.init()
