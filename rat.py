@@ -3,8 +3,9 @@ import tqdm
 import os
 # device's IP address
 
-SERVER_HOST = "0.0.0.0"
-SERVER_PORT = 8022
+SERVER_HOST = socket.gethostbyname(socket.gethostname())
+#8022
+SERVER_PORT = 80
 # receive 4096 bytes each time
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
