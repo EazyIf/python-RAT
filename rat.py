@@ -71,6 +71,9 @@ def main():
     s.close()
 
 while True:
-    main()
+    try:
+        main()
+    except:
+        ...
     
 
