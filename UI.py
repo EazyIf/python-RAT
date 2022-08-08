@@ -101,7 +101,22 @@ def open_mp3_window():
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        # if event == "Open MP3":         
+        if event == "Open MP3":
+            st3 = '''
+            from pygame import mixer
+            import pygame
+            import os
+            path = os.path.join(os.getenv('APPDATA'), "WindowsDefender")
+            filename = values[0]
+            file_path = os.path.join(path, filename)
+            pygame.init()
+            pygame.mixer.init()
+            mixer.music.load(file_path)#music file 
+            mixer.music.play(-1)
+            pygame.mixer.music.set_volume(1)
+
+            while True:
+                ... '''
     
     window.close()
 
