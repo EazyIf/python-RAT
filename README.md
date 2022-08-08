@@ -1,4 +1,4 @@
-This is a rat project only for educational purposes. Never use this code for illegal or immoral purposes, The developer is not responsible for any damage caused. Read the [license](LICENSE) for more information.
+This is a rat project only for educational purposes. Never use this code for illegal or immoral purposes, The developers are not responsible for any damage caused. Read the [license](LICENSE) for more information.
 
 ## Installation
 
