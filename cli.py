@@ -101,23 +101,12 @@ def send_tts(tts_text):
     if not s:
         return
     tts = f"""from gtts import gTTS
-import pygame
-
+from playsound import playsound
 text = "{tts_text}"
-# generate tts
-pygame.init()
-pygame.mixer.init()
 output = gTTS(text=text, lang="en", tld="co.in")
-output.save(f"tts.mp3")
+output.save("tts.mp3")
 
-   
-
-pygame.mixer.music.load("tts.mp3")
-pygame.mixer.music.play()
-pygame.mixer.music.set_volume(1)
-
-while pygame.mixer.music.get_busy():
-   ...
+playsound("tts.mp3")
 """
     send_data(s, tts.encode(), "tts.py")
     s.close()
