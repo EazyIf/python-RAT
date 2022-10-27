@@ -22,6 +22,14 @@ def set_host(new_host):
     host = new_host
 
 
+def get_port():
+    return port
+
+
+def get_host():
+    return host
+
+
 def connect(host, port):
     if not host or not port:
         print("[-] Host or port is not set")

@@ -8,7 +8,6 @@ sg.theme("default1")
 
 
 def main():
-    global host, port
     layout_tts = [
         [sg.Text("Wirte your text here: "), sg.InputText(key="tts_text")],
         [sg.Button("Send TTS", key="send_tts")],
@@ -71,7 +70,7 @@ def main():
                 send_tts(text)
             elif event == "send_file":
                 path = values["file_path"]
-                s = connect(host, port)
+                s = connect(get_host(), get_port())
                 if not s:
                     continue
                 send_file(s, path)
