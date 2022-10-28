@@ -1,3 +1,5 @@
+raise NotImplementedError("See issue #8")
+
 import PySimpleGUI as sg
 
 from cli import *
