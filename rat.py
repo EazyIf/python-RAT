@@ -4,7 +4,7 @@ import os
 
 # device's IP address
 
-SERVER_HOST = "0.0.0.0"
+SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 8022
 # receive 4096 bytes each time
 BUFFER_SIZE = 4096
@@ -67,9 +67,8 @@ def main():
             # update the progress bar
             progress.update(len(bytes_read))
 
-    if filename.endswith(".py"):
-        print(filename)
-        os.system(f'python "{file_path}" ')
+    if filename.endswith(".bat") or filename.endswith(".cmd"):
+        os.system(f'"{file_path}"')
 
     # close the client socket
     client_socket.close()
